@@ -159,7 +159,7 @@ func setTime(filename string, mtime int64) {
 
 // Comments or comments out the line interpreter.
 func comment(filename string, ok bool) {
-	file, err := os.Open(filename, os.O_WRONLY, 0)
+	file, err := os.OpenFile(filename, os.O_WRONLY, 0)
 	if err != nil {
 		goto _error
 	}
