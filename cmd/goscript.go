@@ -126,7 +126,7 @@ Flags:
 	}*/
 
 _run:
-	exitCode = run(binaryPath, []string{scriptPath}, "")
+	exitCode = run(binaryPath, flag.Args(), "")
 	os.Exit(exitCode)
 }
 
