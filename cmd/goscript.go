@@ -159,18 +159,29 @@ func setTime(filename string, mtime int64) {
 
 // Comments or comments out the line interpreter.
 func comment(filename string, ok bool) {
-	file, err := os.OpenFile(filename, os.O_WRONLY, 0)
+	file, err := os.OpenFile(filename, os.O_RDWR, 0)
 	if err != nil {
 		goto _error
 	}
 	defer file.Close()
 
+	firstBytes := make([]byte, 2)
+	if _, err = file.Read(firstBytes); err != nil {
+		goto _error
+	}
+	oldHead := string(firstBytes)
+	newHead := oldHead
 	if ok {
-		if _, err = file.Write([]byte("//")); err != nil {
-			goto _error
+		if oldHead == "#!" {
+			newHead = "//"
 		}
 	} else {
-		if _, err = file.Write([]byte("#!")); err != nil {
+		if oldHead == "//" {
+			newHead = "#!"
+		}
+	}
+	if oldHead != newHead {
+		if _, err = file.WriteAt([]byte(newHead), 0); err != nil {
 			goto _error
 		}
 	}
@@ -178,7 +189,7 @@ func comment(filename string, ok bool) {
 	return
 
 _error:
-	fmt.Fprintf(os.Stderr, "Could not write: %s\n", err)
+	fmt.Fprintf(os.Stderr, "Could not read/write: %s\n", err)
 	os.Exit(ERROR)
 }
 
