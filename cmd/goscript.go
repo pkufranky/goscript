@@ -32,6 +32,7 @@ var ENVIRON []string
 var fShared = flag.Bool("shared", false,
 	"whether the script is used on a mixed network of machines or   "+
 	"systems from a shared filesystem")
+var verbose = flag.Bool("v", false, "verbose")
 
 func usage() {
 	flag.PrintDefaults()
@@ -126,6 +127,9 @@ Flags:
 	}*/
 
 _run:
+	if *verbose {
+		fmt.Println(strings.Join(flag.Args(), " "))
+	}
 	exitCode = run(binaryPath, flag.Args(), "")
 	os.Exit(exitCode)
 }
